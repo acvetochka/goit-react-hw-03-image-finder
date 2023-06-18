@@ -5,10 +5,9 @@ import {
   SearchForm,
   SearchFormButton,
   SearchFormInput,
-  // SearchFormLabel,
   StyledBiSearchAlt,
 } from 'components/Searchbar/Searchbar.styled';
-// import { BiSearchAlt } from 'react-icons/bi';
+
 export default class Searchbar extends Component {
   state = {
     query: '',
@@ -22,7 +21,6 @@ export default class Searchbar extends Component {
     evt.preventDefault();
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
-    // console.log(this.state.query);
     evt.currentTarget.reset();
   };
 
@@ -31,16 +29,12 @@ export default class Searchbar extends Component {
       <Header>
         <SearchForm onSubmit={this.onSubmit}>
           <SearchFormButton type="submit">
-            {/* <SearchFormLabel className="button-label"> */}
             <StyledBiSearchAlt />
-            {/* </SearchFormLabel> */}
           </SearchFormButton>
 
           <SearchFormInput
             name="search"
             type="text"
-            // autocomplete="off"
-            // autofocus
             onChange={this.onChange}
             placeholder="Search images and photos"
           />

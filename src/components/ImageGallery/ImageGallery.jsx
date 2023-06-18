@@ -14,7 +14,4 @@ export default function ImageGallery({ images, openModal }) {
 
 ImageGallery.propTypes = {
   images: PropTypes.array.isRequired,
-  // name: PropTypes.string.isRequired,
-  // number: PropTypes.string.isRequired,
-  // deleteContact: PropTypes.func.isRequired,
 };

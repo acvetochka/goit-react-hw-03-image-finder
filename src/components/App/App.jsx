@@ -44,8 +44,12 @@ export default class App extends Component {
       this.toggleModal();
     }, 500);
   };
+
   handleSubmit = query => {
     this.setState({ query: query, page: 1 });
+    if (!query) {
+      Notiflix.Notify.warning('Enter your request!');
+    }
   };
 
   buttonOnClick = () => {
@@ -60,7 +64,6 @@ export default class App extends Component {
       const { query, page } = this.state;
       if (query === '') {
         this.setState({ images: [], totalPages: 0 });
-        Notiflix.Notify.warning('Enter your request!');
         this.setState({ isLoading: false });
         return;
       }
@@ -68,7 +71,6 @@ export default class App extends Component {
       const pageCount = imagesArray.totalHits / 12;
       this.setState({
         totalPages: pageCount,
-        // isLoading: true,
       });
       setTimeout(() => {
         if (page !== prevState.page) {
@@ -115,12 +117,13 @@ export default class App extends Component {
   }
 }
 
-Notiflix.Report.init({
-  svgSize: '50px',
-  messageFontSize: '20px',
+Notiflix.Notify.init({
+  position: 'center-top',
+  distance: '100px',
+  timeout: 1000,
   warning: {
-    svgColor: '#44728f',
-    buttonBackground: '#44728f',
-    backOverlayColor: 'rgba(0,0, 0,0.2)',
+    background: '#44728f',
+    textColor: '#fff',
+    backOverlayColor: 'rgba(238,191,49,0.2)',
   },
 });

@@ -5,9 +5,10 @@ import {
   SearchForm,
   SearchFormButton,
   SearchFormInput,
-  SearchFormLabel,
+  // SearchFormLabel,
+  StyledBiSearchAlt,
 } from 'components/Searchbar/Searchbar.styled';
-
+// import { BiSearchAlt } from 'react-icons/bi';
 export default class Searchbar extends Component {
   state = {
     query: '',
@@ -19,27 +20,27 @@ export default class Searchbar extends Component {
 
   onSubmit = evt => {
     evt.preventDefault();
-    const form = evt.currentTarget;
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
-    console.log(this.state.query);
-    form.reset();
+    // console.log(this.state.query);
+    evt.currentTarget.reset();
   };
 
   render() {
     return (
-      <Header className="searchbar">
-        <SearchForm className="form" onSubmit={this.onSubmit}>
-          <SearchFormButton type="submit" className="button">
-            <SearchFormLabel className="button-label">Search</SearchFormLabel>
+      <Header>
+        <SearchForm onSubmit={this.onSubmit}>
+          <SearchFormButton type="submit">
+            {/* <SearchFormLabel className="button-label"> */}
+            <StyledBiSearchAlt />
+            {/* </SearchFormLabel> */}
           </SearchFormButton>
 
           <SearchFormInput
-            className="input"
             name="search"
             type="text"
-            //   autocomplete="off"
-            //   autofocus
+            // autocomplete="off"
+            // autofocus
             onChange={this.onChange}
             placeholder="Search images and photos"
           />
@@ -48,6 +49,8 @@ export default class Searchbar extends Component {
     );
   }
 }
-// Searchbar.propTypes = {
-//   onSubmit: PropTypes.func.isRequired,
-// };
+
+Searchbar.propTypes = {
+  // query: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};

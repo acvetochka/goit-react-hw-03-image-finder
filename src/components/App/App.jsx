@@ -3,13 +3,20 @@ import fetchImages from 'helpers/api';
 import Searchbar from '../Searchbar/Searchbar';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import Button from 'components/Button/Button';
+import Loader from 'components/Loader/Loader';
+import Modal from 'components/Modal/Modal';
 import { Container } from './App.styled';
+import Notiflix from 'notiflix';
 
 export default class App extends Component {
   state = {
     images: [],
     page: 1,
     query: '',
+    totalPages: 0,
+    isLoading: false,
+    showModal: false,
+    largeImageURL: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -17,69 +24,92 @@ export default class App extends Component {
       this.state.page !== prevState.page ||
       this.state.query !== prevState.query
     ) {
-      // fetch();
-      fetchImages(this.state.query, this.state.page).then(res =>
-        console.log(res)
-      );
+      this.fetchImageToArray(prevState);
     }
   }
 
-  handleSubmit = query => {
-    this.setState(
-      { query: query, page: 1 },
-      this.fetchImageToArray
-
-      //   async () => {
-      //   try {
-      //     const { images, page, query } = this.state;
-      //     const imagesArray = await fetchImages(query, page);
-      //     console.log(imagesArray.hits);
-      //     this.setState({ images: imagesArray.hits });
-      //     console.log(images);
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
-      // }
-    );
-    console.log(query);
+  toggleModal = () => {
+    this.setState(({ showModal }) => ({ showModal: !showModal }));
   };
 
-  fetchImageToArray = async () => {
+  openModal = id => {
+    this.setState({ isLoading: true });
+    const largeImage = this.state.images.find(image => image.id === id);
+
+    setTimeout(() => {
+      this.setState({
+        largeImageURL: largeImage.largeImageURL,
+        isLoading: false,
+      });
+      this.toggleModal();
+    }, 500);
+  };
+  handleSubmit = query => {
+    this.setState({ query: query, page: 1 });
+  };
+
+  buttonOnClick = () => {
+    this.setState({
+      page: this.state.page + 1,
+    });
+  };
+
+  fetchImageToArray = async prevState => {
     try {
-      const { images, page, query } = this.state;
+      this.setState({ isLoading: true });
+      const { query, page } = this.state;
+      if (query === '') {
+        this.setState({ images: [], totalPages: 0 });
+        Notiflix.Notify.warning('Enter your request!');
+        this.setState({ isLoading: false });
+        return;
+      }
       const imagesArray = await fetchImages(query, page);
-      console.log(imagesArray.hits);
-      this.setState({ images: imagesArray.hits });
-      console.log(images);
+      const pageCount = imagesArray.totalHits / 12;
+      this.setState({
+        totalPages: pageCount,
+        // isLoading: true,
+      });
+      setTimeout(() => {
+        if (page !== prevState.page) {
+          this.setState(prevState => ({
+            images: [...prevState.images, ...imagesArray.hits],
+            isLoading: false,
+          }));
+        } else {
+          this.setState({ images: imagesArray.hits, isLoading: false });
+        }
+      }, 1000);
     } catch (error) {
       console.log(error);
     }
   };
 
-  buttonOnClick = () => {
-    this.setState(
-      { page: this.state.page + 1 },
-      this.fetchImageToArray
-      //   async () => {
-      //   try {
-      //     const { images, page, query } = this.state;
-      //     const imagesArray = await fetchImages(query, page);
-      //     console.log(imagesArray.hits);
-      //     this.setState({ images: imagesArray.hits });
-      //     console.log(images);
-      //   } catch (error) {
-      //     console.log(error);
-      //   }
-      // }
-    );
-  };
-
   render() {
+    const {
+      images,
+      query,
+      isLoading,
+      page,
+      totalPages,
+      showModal,
+      largeImageURL,
+    } = this.state;
     return (
       <Container>
+        {isLoading && <Loader />}
         <Searchbar onSubmit={this.handleSubmit} />
-        <ImageGallery images={this.state.images} />
-        <Button onClick={this.buttonOnClick} />
+        {query !== '' && (
+          <>
+            <ImageGallery images={images} openModal={this.openModal} />
+            {page < totalPages && <Button onClick={this.buttonOnClick} />}
+          </>
+        )}
+        {showModal && (
+          <Modal onClose={this.toggleModal}>
+            <img src={largeImageURL} alt={query} />
+          </Modal>
+        )}
       </Container>
     );
   }

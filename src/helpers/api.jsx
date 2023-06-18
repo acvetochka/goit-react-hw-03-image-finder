@@ -3,7 +3,7 @@ import axios from 'axios';
 const per_page = 12;
 let totalPages = 0;
 
-export default async function fetchImages(query, page) {
+export default async function fetchImages(query, page, totalPages) {
   const API_KEY = '35367804-7020ab364021c8257af086cad';
   const params = new URLSearchParams({
     key: API_KEY,
@@ -19,8 +19,9 @@ export default async function fetchImages(query, page) {
   );
 
   totalPages = response.data.totalHits / per_page;
+  //   console.log(totalPages);
   //   console.log(response);
-  console.log(response.data.hits);
+  //   console.log(response.data.hits);
   return response.data;
 
   // fetch(

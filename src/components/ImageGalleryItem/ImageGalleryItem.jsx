@@ -3,14 +3,16 @@ import { GalleryItem, GalleryItemImage } from './ImageGalleryItem.styled';
 
 export default function ImageGalleryItem({ image, openModal }) {
   const { id, webformatURL } = image;
-  const openModaltoClick = evt => {
-    evt.preventDefault();
-    openModal(id);
-  };
 
   return (
     <GalleryItem id={id} className="gallery-item">
-      <GalleryItemImage src={webformatURL} alt="" onClick={openModaltoClick} />
+      <GalleryItemImage
+        src={webformatURL}
+        alt=""
+        onClick={() => {
+          openModal(id);
+        }}
+      />
     </GalleryItem>
   );
 }

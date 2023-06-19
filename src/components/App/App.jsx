@@ -46,7 +46,7 @@ export default class App extends Component {
   };
 
   handleSubmit = query => {
-    this.setState({ query: query, page: 1 });
+    this.setState({ images: [], query: query, page: 1 });
     if (!query) {
       Notiflix.Notify.warning('Enter your request!');
     }
@@ -62,24 +62,19 @@ export default class App extends Component {
     try {
       this.setState({ isLoading: true });
       const { query, page } = this.state;
-      if (query === '') {
-        this.setState({ images: [], totalPages: 0 });
-        this.setState({ isLoading: false });
-        return;
-      }
-      const imagesArray = await fetchImages(query, page);
-      const pageCount = imagesArray.totalHits / 12;
+      const { totalHits, hits } = await fetchImages(query, page);
+      const pageCount = totalHits / 12;
       this.setState({
         totalPages: pageCount,
       });
       setTimeout(() => {
         if (page !== prevState.page) {
           this.setState(prevState => ({
-            images: [...prevState.images, ...imagesArray.hits],
+            images: [...prevState.images, ...hits],
             isLoading: false,
           }));
         } else {
-          this.setState({ images: imagesArray.hits, isLoading: false });
+          this.setState({ images: hits, isLoading: false });
         }
       }, 1000);
     } catch (error) {

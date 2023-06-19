@@ -14,4 +14,5 @@ export default function ImageGallery({ images, openModal }) {
 
 ImageGallery.propTypes = {
   images: PropTypes.array.isRequired,
+  openModal: PropTypes.func.isRequired,
 };
